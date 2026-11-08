@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="お金のたね">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F1F5F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111817" media="(prefers-color-scheme: dark)">
+<meta name="description" content="こどもNISAに入れたお金が18さいまでにどうなるかを、ゲームでためす子ども向けシミュレーター">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="style.css">
+<title>お金のたね</title>
+</head>
+<body>
+<div class="topline"></div>
+<div id="app">
+  <header class="topbar">
+    <div class="brand"><span class="brand-emoji">🌱</span><h1>お金のたね</h1></div>
+    <div class="top-btns">
+      <button type="button" class="icon-btn" id="btn-rules" aria-label="ひみつのルール">📘</button>
+      <button type="button" class="icon-btn" id="btn-home" aria-label="ホームにもどる" hidden>🏠</button>
+    </div>
+  </header>
+
+  <!-- ホーム -->
+  <section id="s-home" class="screen" aria-label="ホーム">
+    <div class="hero">
+      <div class="hero-emoji">🌱💰</div>
+      <h2>お金を「たね」みたいに<br>育ててみよう</h2>
+      <p>こどもNISAに入れたお金が、18さいまでにどうなるか。ゲームでためしてみよう。ほんもののお金はつかわないよ。</p>
+    </div>
+
+    <div class="sec-label">あそびかた</div>
+    <button type="button" class="cat-card" style="--cs:var(--accent);--cw:var(--ok-soft)" data-go="setup-grow">
+      <span class="bdg">🌱</span>
+      <span class="meta"><span class="name">そだててみる</span><span class="desc">1年ずつすすめて、お金がどう変わるか見る</span></span>
+      <span class="arrow">›</span>
+    </button>
+    <button type="button" class="cat-card" style="--cs:var(--gold);--cw:var(--gold-1)" data-go="setup-compare">
+      <span class="bdg">🎲</span>
+      <span class="meta"><span class="name">100回くらべる</span><span class="desc">3つのカゴを、100とおりの未来でくらべる</span></span>
+      <span class="arrow">›</span>
+    </button>
+    <button type="button" class="cat-card" style="--cs:var(--c-usa);--cw:var(--blue-soft)" data-go="rules">
+      <span class="bdg">📘</span>
+      <span class="meta"><span class="name">ひみつのルール</span><span class="desc">72のルール・こどもNISAのやくそく</span></span>
+      <span class="arrow">›</span>
+    </button>
+
+    <div class="sec-label">これまでのけっか</div>
+    <div id="history" class="history"></div>
+  </section>
+
+  <!-- じゅんび -->
+  <section id="s-setup" class="screen" aria-label="じゅんび">
+    <h2 class="page-title" id="setup-title">じゅんび</h2>
+    <div class="card">
+      <div class="q-label"><span class="num">1</span>何さいからはじめる？</div>
+      <div class="stepper">
+        <button type="button" id="age-minus" aria-label="1さい下げる">−</button>
+        <b id="age-val">6さい</b>
+        <button type="button" id="age-plus" aria-label="1さい上げる">＋</button>
+      </div>
+
+      <div class="q-label"><span class="num">2</span>はじめに入れるお金</div>
+      <div class="chips" id="first-chips"></div>
+
+      <div class="q-label"><span class="num">3</span>毎年たすお金（お年玉など）</div>
+      <div class="chips" id="yearly-chips"></div>
+
+      <p class="hint">こどもNISAは、1年に60万円まで。17さいまで入れられるよ。</p>
+    </div>
+
+    <div id="basket-pick">
+      <div class="q-label out"><span class="num">4</span>どのカゴに入れる？</div>
+      <div id="basket-cards"></div>
+    </div>
+
+    <div class="btn-row">
+      <button type="button" class="btn primary" id="setup-go">スタート！</button>
+    </div>
+  </section>
+
+  <!-- そだてる -->
+  <section id="s-grow" class="screen" aria-label="そだてる">
+    <div class="grow-head">
+      <span class="pill" id="g-basket"></span>
+      <span class="pill age" id="g-age"></span>
+    </div>
+
+    <div class="card money-card">
+      <div class="mc-label" id="g-label">いまのお金</div>
+      <div class="mc-value" id="g-value"></div>
+      <div class="mc-sub" id="g-sub"></div>
+      <div class="weather-msg" id="g-msg" aria-live="polite"></div>
+    </div>
+
+    <div class="card chart-card">
+      <div id="g-chart"></div>
+      <div class="legend" id="g-legend"></div>
+      <div class="weather-row" id="g-weather" aria-label="1年ごとのてんき"></div>
+    </div>
+
+    <div class="btn-row" id="g-controls">
+      <button type="button" class="btn primary big" id="g-step">1年すすめる ▶</button>
+      <button type="button" class="btn secondary" id="g-fast">18さいまで いっきに ⏩</button>
+    </div>
+
+    <div class="card decide" id="g-18" hidden>
+      <div class="decide-emoji">🎉</div>
+      <h3>18さいになったよ！</h3>
+      <p id="g-18-text"></p>
+      <p class="small">18さいからは、大人のNISAにうつって、ぜんぶ自分のお金になる。どうする？</p>
+      <div class="btn-row">
+        <button type="button" class="btn gold" id="g-use">つかう 🎁</button>
+        <button type="button" class="btn primary" id="g-keep">60さいまで おいておく 🌳</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- けっか -->
+  <section id="s-result" class="screen" aria-label="けっか">
+    <div class="card result-card">
+      <div class="r-emoji" id="r-emoji"></div>
+      <h2 id="r-title"></h2>
+      <div class="r-stats" id="r-stats"></div>
+    </div>
+    <div class="sec-label">わかったこと</div>
+    <ul class="learn" id="r-learn"></ul>
+    <div class="btn-row">
+      <button type="button" class="btn primary" id="r-again">もういちど（同じカゴ）</button>
+      <button type="button" class="btn secondary" id="r-other">ほかのカゴでためす</button>
+      <button type="button" class="btn gold" id="r-compare">100回くらべてみる 🎲</button>
+    </div>
+  </section>
+
+  <!-- 100回くらべる -->
+  <section id="s-compare" class="screen" aria-label="100回くらべる">
+    <h2 class="page-title">🎲 100回くらべる</h2>
+    <p class="intro">同じ100とおりの未来で、カゴをくらべたよ。点1つが、未来1つ。<b class="red">赤い点</b>は、入れたお金より へってしまった未来。たての太い線が「まんなか」。</p>
+
+    <div class="plan-line">
+      <span id="c-plan"></span>
+      <button type="button" class="btn-sm" id="c-edit">かえる</button>
+    </div>
+
+    <div class="horizon-row">
+      <span class="small">いつで見る？</span>
+      <div class="chips" id="c-horizon"></div>
+    </div>
+
+    <div class="card chart-card"><div id="c-chart"></div></div>
+
+    <div id="c-cards"></div>
+
+    <div class="btn-row">
+      <button type="button" class="btn gold" id="c-reroll">べつの100回をためす 🎲</button>
+    </div>
+
+    <div class="notice"><b>見かた：</b>まんなかが右にあって、赤い点が少ないカゴが「ゆれのわりに、よくのびる」カゴ。30さい・60さいにすると、赤い点がどうなるかも見てみてね。</div>
+  </section>
+
+  <!-- ひみつのルール -->
+  <section id="s-rules" class="screen" aria-label="ひみつのルール">
+    <h2 class="page-title">📘 ひみつのルール</h2>
+
+    <div class="card rule">
+      <h3>🌱 72のルール</h3>
+      <p>72を「1年にふえる%」でわると、お金が2倍になるまでの年数が、だいたいわかるよ。</p>
+      <label class="slider-row">
+        <span>1年に</span>
+        <input type="range" id="r72" min="1" max="10" step="1" value="5" aria-label="1年にふえる%">
+        <b id="r72-pct">5%</b>
+      </label>
+      <div class="r72-out" id="r72-out"></div>
+    </div>
+
+    <div class="card rule">
+      <h3>🧺 たまごは1つのカゴに入れない</h3>
+      <p>カゴを1つ落としても、ほかのカゴのたまごはわれない。お金も、たくさんの会社に分けて入れると、1つがだめでも、ぜんぶはだめにならないよ。</p>
+    </div>
+
+    <div class="card rule">
+      <h3>🎢 のびる と ゆれる</h3>
+      <p>株は、長い目で見るとふえてきた。でも、1年で4わりへった年もある。「ふえる」は、やくそくじゃないよ。</p>
+      <p>よくのびるカゴほど、ゆれも大きい。ゆれが小さいカゴは、のびも小さい。</p>
+    </div>
+
+    <div class="card rule">
+      <h3>💪 へっても、あわてて売らない</h3>
+      <p>へったときに売ると、そのあともどったぶんを、もらえなくなる。いつ売ればいいかは、おとなでもわからない。だから、はじめに「へっても売らない」とやくそくしておこう。</p>
+    </div>
+
+    <div class="card rule">
+      <h3>🔒 こどもNISAのやくそく</h3>
+      <ul class="dots-list">
+        <li>2027年からはじまる、子どもせんようの「ぜいきんがかからない」口座。</li>
+        <li>1年に60万円まで。ぜんぶで600万円まで。17さいまで入れられる。</li>
+        <li>12さいまでは、出せない（さいがいで家がこわれたときだけ）。</li>
+        <li>12さいからは、学校やくらしのためなら出せる。でも、<b>自分の「いいよ」</b>がいる。</li>
+        <li>18さいで大人のNISAにうつる。そこからは、つかうのも、おいておくのも、自分できめる。</li>
+      </ul>
+    </div>
+
+    <details class="card parents">
+      <summary>おうちの人へ（このアプリの数字について）</summary>
+      <div id="parents-body"></div>
+    </details>
+  </section>
+
+  <!-- へっちゃった！ -->
+  <div class="modal" id="drop-modal" hidden role="dialog" aria-modal="true" aria-labelledby="drop-title">
+    <div class="modal-card">
+      <div class="modal-emoji">⛈️</div>
+      <h3 id="drop-title">へっちゃった！</h3>
+      <p id="drop-text"></p>
+      <p class="small">どうする？</p>
+      <div class="btn-row">
+        <button type="button" class="btn primary" id="drop-keep">そのまま もつ 💪</button>
+        <button type="button" class="btn danger" id="drop-sell">ぜんぶ売って、ちょきん箱にする 🐷</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/domain/random.js"></script>
+<script src="js/domain/baskets.js"></script>
+<script src="js/domain/simulate.js"></script>
+<script src="js/storage.js"></script>
+<script src="js/chart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

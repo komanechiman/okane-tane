@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>tests</title>
+<style>
+  body{ font-family:"BIZ UDPGothic","Yu Gothic",sans-serif; padding:16px; background:#fff; color:#222; }
+  .ok{ color:#15805F; } .ng{ color:#C8304A; font-weight:700; }
+  li{ margin:3px 0; }
+</style>
+</head>
+<body>
+<h1 id="sum">running…</h1>
+<ul id="list"></ul>
+<script src="js/domain/random.js"></script>
+<script src="js/domain/baskets.js"></script>
+<script src="js/domain/simulate.js"></script>
+<script src="tests/simulate.test.js"></script>
+<script>
+  (function () {
+    const r = window.TEST_RESULTS || [];
+    const pass = r.filter(function (t) { return t.ok; }).length;
+    const label = (pass === r.length ? 'PASS ' : 'FAIL ') + pass + '/' + r.length;
+    document.title = label;
+    document.getElementById('sum').textContent = label;
+    document.getElementById('list').innerHTML = r.map(function (t) {
+      const li = document.createElement('li');
+      li.className = t.ok ? 'ok' : 'ng';
+      li.textContent = (t.ok ? '✓ ' : '✗ ') + t.name + (t.ok ? '' : ' — ' + t.msg);
+      return li.outerHTML;
+    }).join('');
+  })();
+</script>
+</body>
+</html>
